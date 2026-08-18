@@ -1,0 +1,377 @@
+{
+  "name": "My workflow",
+  "nodes": [
+    {
+      "parameters": {
+        "options": {
+          "allowFileUploads": true
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.chatTrigger",
+      "typeVersion": 1.4,
+      "position": [
+        0,
+        416
+      ],
+      "id": "1cc38c8d-d491-4dfd-83fe-5860987535b8",
+      "name": "When chat message received",
+      "webhookId": "4b62052f-c631-4706-9024-b5768b934bab"
+    },
+    {
+      "parameters": {
+        "options": {
+          "systemMessage": "Você é um personal trainer virtual chamado Academia AI. Seu objetivo é\najudar o usuário a montar treinos, tirar dúvidas sobre execução de\nexercícios e consultar os documentos de treino que ele enviar (PDF ou CSV).\n\nSempre responda em português do Brasil, de forma clara, motivadora e objetiva.\n\nRegras:\n1. Antes de montar um treino, use o que já foi dito na conversa. Só\n   pergunte o que realmente estiver faltando entre: objetivo, nível,\n   dias disponíveis e equipamento. Se faltar pouco, assuma um padrão\n   razoável em vez de reperguntar tudo.\n2. Se o usuário perguntar sobre como executar um exercício, explique\n   com suas próprias palavras, de forma clara e segura, incluindo\n   dicas de postura e erros comuns a evitar.\n3. Para QUALQUER pergunta sobre séries, repetições, descanso, exercícios\n   específicos do \"meu treino\" ou do documento enviado, você DEVE\n   OBRIGATORIAMENTE usar a ferramenta de busca de documentos antes de\n   responder. Nunca responda de memória própria questões sobre o treino\n   do usuário — sempre consulte a ferramenta primeiro, mesmo que ache\n   que já sabe a resposta. Se a busca não retornar nada relevante, avise\n   o usuário que não encontrou essa informação no documento enviado, em\n   vez de inventar. Sempre que basear a resposta em um documento, cite\n   ao final: \"Fonte: Academia AI\".\n4. Para questões de saúde/lesão, recomende sempre consultar um\n   profissional antes de seguir qualquer orientação.\n5. Seja sempre encorajador e didático, como um bom personal trainer."
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 3.1,
+      "position": [
+        512,
+        0
+      ],
+      "id": "e8a89b6f-c308-44d9-94e8-1a08bde07b6d",
+      "name": "AI Agent",
+      "retryOnFail": true
+    },
+    {
+      "parameters": {
+        "modelName": "models/gemini-flash-lite-latest",
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatGoogleGemini",
+      "typeVersion": 1.1,
+      "position": [
+        464,
+        240
+      ],
+      "id": "e0be8d80-f484-4cec-9bc5-c584b6686ab3",
+      "name": "Google Gemini Chat Model",
+      "credentials": {
+        "googlePalmApi": {
+          "id": "NBhlIXKLPcsICLdo",
+          "name": "Google Gemini(PaLM) Api account"
+        }
+      }
+    },
+    {
+      "parameters": {},
+      "type": "@n8n/n8n-nodes-langchain.memoryBufferWindow",
+      "typeVersion": 1.4,
+      "position": [
+        592,
+        240
+      ],
+      "id": "73fc3435-154a-4fad-a656-39f23212a2f4",
+      "name": "Simple Memory"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "loose",
+            "version": 3
+          },
+          "conditions": [
+            {
+              "id": "5b7447e2-4c61-4ceb-82d3-f9483774b38f",
+              "leftValue": "={{ $json.files ? $json.files.length : 0 }}",
+              "rightValue": "0",
+              "operator": {
+                "type": "string",
+                "operation": "equals",
+                "name": "filter.operator.equals"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "looseTypeValidation": true,
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.3,
+      "position": [
+        224,
+        416
+      ],
+      "id": "4d26ce46-4e9e-4c10-a115-55aeac7691f2",
+      "name": "If"
+    },
+    {
+      "parameters": {
+        "operation": "pdf",
+        "binaryPropertyName": "data0",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.extractFromFile",
+      "typeVersion": 1.1,
+      "position": [
+        656,
+        608
+      ],
+      "id": "a2caa27e-4957-4338-a58d-fa46521eec3c",
+      "name": "Extract from File"
+    },
+    {
+      "parameters": {
+        "mode": "insert",
+        "memoryKey": {
+          "__rl": true,
+          "mode": "list",
+          "value": "vector_store_key"
+        },
+        "clearStore": true
+      },
+      "type": "@n8n/n8n-nodes-langchain.vectorStoreInMemory",
+      "typeVersion": 1.3,
+      "position": [
+        1072,
+        608
+      ],
+      "id": "f042f875-c80a-4125-88de-708421333bf4",
+      "name": "Simple Vector Store"
+    },
+    {
+      "parameters": {},
+      "type": "@n8n/n8n-nodes-langchain.embeddingsGoogleGemini",
+      "typeVersion": 1,
+      "position": [
+        1088,
+        848
+      ],
+      "id": "ab1c06c1-aeff-4a71-847c-833cc3280062",
+      "name": "Embeddings Google Gemini",
+      "credentials": {
+        "googlePalmApi": {
+          "id": "NBhlIXKLPcsICLdo",
+          "name": "Google Gemini(PaLM) Api account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "options": {
+          "metadata": {
+            "metadataValues": [
+              {
+                "name": "source",
+                "value": "={{ $('When chat message received').item.binary.data0.fileName }}"
+              }
+            ]
+          }
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.documentDefaultDataLoader",
+      "typeVersion": 1.1,
+      "position": [
+        1248,
+        832
+      ],
+      "id": "8f365ac3-8940-4858-8cb2-14725cf54a25",
+      "name": "Default Data Loader"
+    },
+    {
+      "parameters": {
+        "mode": "retrieve-as-tool",
+        "toolDescription": "Busca informações nos documentos de treino (PDF ou CSV) que o usuário enviou anteriormente. Use esta ferramenta sempre que o usuário perguntar algo sobre o próprio treino, séries, repetições, exercícios específicos do documento enviado, ou pedir para consultar o que já foi enviado.",
+        "memoryKey": {
+          "__rl": true,
+          "mode": "list",
+          "value": "vector_store_key"
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.vectorStoreInMemory",
+      "typeVersion": 1.3,
+      "position": [
+        720,
+        240
+      ],
+      "id": "cb593995-766e-46e2-a6d3-a0f5574f703f",
+      "name": "Simple Vector Store1"
+    },
+    {
+      "parameters": {},
+      "type": "@n8n/n8n-nodes-langchain.embeddingsGoogleGemini",
+      "typeVersion": 1,
+      "position": [
+        800,
+        448
+      ],
+      "id": "f80cd5e4-e9c5-4fe4-bdd4-5ac09e8ff2f2",
+      "name": "Embeddings Google Gemini1",
+      "credentials": {
+        "googlePalmApi": {
+          "id": "NBhlIXKLPcsICLdo",
+          "name": "Google Gemini(PaLM) Api account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "2f4c3fc6-ae5e-499f-a1b3-86078e4a8884",
+              "name": "metadata.source",
+              "value": "={{ $('When chat message received').item.binary.data0.fileName }}",
+              "type": "string"
+            }
+          ]
+        },
+        "includeOtherFields": true,
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.5,
+      "position": [
+        880,
+        656
+      ],
+      "id": "98b61bdb-de24-4fdb-a5be-b57883ade46f",
+      "name": "Edit Fields"
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "When chat message received": {
+      "main": [
+        [
+          {
+            "node": "If",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Google Gemini Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Simple Memory": {
+      "ai_memory": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_memory",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "AI Agent": {
+      "main": [
+        []
+      ]
+    },
+    "If": {
+      "main": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Extract from File",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Extract from File": {
+      "main": [
+        [
+          {
+            "node": "Edit Fields",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Embeddings Google Gemini": {
+      "ai_embedding": [
+        [
+          {
+            "node": "Simple Vector Store",
+            "type": "ai_embedding",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Default Data Loader": {
+      "ai_document": [
+        [
+          {
+            "node": "Simple Vector Store",
+            "type": "ai_document",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Simple Vector Store1": {
+      "ai_tool": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Embeddings Google Gemini1": {
+      "ai_embedding": [
+        [
+          {
+            "node": "Simple Vector Store1",
+            "type": "ai_embedding",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Edit Fields": {
+      "main": [
+        [
+          {
+            "node": "Simple Vector Store",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1",
+    "binaryMode": "separate",
+    "availableInMCP": false,
+    "timeSavedMode": "fixed",
+    "callerPolicy": "workflowsFromSameOwner"
+  },
+  "versionId": "ab79f899-0e48-4d79-8945-26c17c0e1027",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "6a6b1c291f820387169b5ef3c670c3931ecddb4cec52b88717a3a66464f43e81"
+  },
+  "nodeGroups": [],
+  "id": "0paR5eDMiThnfZCE",
+  "tags": []
+}

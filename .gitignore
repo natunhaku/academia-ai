@@ -1,0 +1,23 @@
+# Variáveis de ambiente e credenciais
+.env
+.env.local
+
+# Credenciais
+credentials.json
+secrets.json
+
+# Sistema operacional
+.DS_Store
+Thumbs.db
+
+# VS Code
+.vscode/
+
+# Logs
+*.log
+
+# Python
+__pycache__/
+*.pyc
+.venv/
+venv/
