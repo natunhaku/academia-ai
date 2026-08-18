@@ -28,7 +28,13 @@ Este projeto foi desenvolvido como parte do **Challenge Agente de IA – Tech Bu
 ---
 
 ## Arquitetura
+### Workflow no n8n
 
+A arquitetura do agente foi construída no n8n, integrando o Google Gemini, memória de conversa, embeddings e busca vetorial para consulta aos documentos enviados pelo usuário.
+
+![Workflow do Academia AI no n8n](screenshots/workflow-n8n.png)
+
+---
 O fluxo principal do projeto funciona da seguinte forma:
 
 ```text

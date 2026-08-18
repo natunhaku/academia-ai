@@ -10,8 +10,8 @@
       "type": "@n8n/n8n-nodes-langchain.chatTrigger",
       "typeVersion": 1.4,
       "position": [
-        0,
-        416
+        -16,
+        560
       ],
       "id": "1cc38c8d-d491-4dfd-83fe-5860987535b8",
       "name": "When chat message received",
@@ -26,7 +26,7 @@
       "type": "@n8n/n8n-nodes-langchain.agent",
       "typeVersion": 3.1,
       "position": [
-        512,
+        496,
         0
       ],
       "id": "e8a89b6f-c308-44d9-94e8-1a08bde07b6d",
@@ -41,7 +41,7 @@
       "type": "@n8n/n8n-nodes-langchain.lmChatGoogleGemini",
       "typeVersion": 1.1,
       "position": [
-        464,
+        448,
         240
       ],
       "id": "e0be8d80-f484-4cec-9bc5-c584b6686ab3",
@@ -54,11 +54,14 @@
       }
     },
     {
-      "parameters": {},
+      "parameters": {
+        "sessionIdType": "customKey",
+        "sessionKey": "={{ $json.sessionId }}"
+      },
       "type": "@n8n/n8n-nodes-langchain.memoryBufferWindow",
       "typeVersion": 1.4,
       "position": [
-        592,
+        576,
         240
       ],
       "id": "73fc3435-154a-4fad-a656-39f23212a2f4",
@@ -93,8 +96,8 @@
       "type": "n8n-nodes-base.if",
       "typeVersion": 2.3,
       "position": [
-        224,
-        416
+        208,
+        560
       ],
       "id": "4d26ce46-4e9e-4c10-a115-55aeac7691f2",
       "name": "If"
@@ -108,7 +111,7 @@
       "type": "n8n-nodes-base.extractFromFile",
       "typeVersion": 1.1,
       "position": [
-        656,
+        640,
         608
       ],
       "id": "a2caa27e-4957-4338-a58d-fa46521eec3c",
@@ -127,7 +130,7 @@
       "type": "@n8n/n8n-nodes-langchain.vectorStoreInMemory",
       "typeVersion": 1.3,
       "position": [
-        1072,
+        1280,
         608
       ],
       "id": "f042f875-c80a-4125-88de-708421333bf4",
@@ -138,7 +141,7 @@
       "type": "@n8n/n8n-nodes-langchain.embeddingsGoogleGemini",
       "typeVersion": 1,
       "position": [
-        1088,
+        1296,
         848
       ],
       "id": "ab1c06c1-aeff-4a71-847c-833cc3280062",
@@ -166,8 +169,8 @@
       "type": "@n8n/n8n-nodes-langchain.documentDefaultDataLoader",
       "typeVersion": 1.1,
       "position": [
-        1248,
-        832
+        1424,
+        848
       ],
       "id": "8f365ac3-8940-4858-8cb2-14725cf54a25",
       "name": "Default Data Loader"
@@ -185,7 +188,7 @@
       "type": "@n8n/n8n-nodes-langchain.vectorStoreInMemory",
       "typeVersion": 1.3,
       "position": [
-        720,
+        704,
         240
       ],
       "id": "cb593995-766e-46e2-a6d3-a0f5574f703f",
@@ -196,7 +199,7 @@
       "type": "@n8n/n8n-nodes-langchain.embeddingsGoogleGemini",
       "typeVersion": 1,
       "position": [
-        800,
+        784,
         448
       ],
       "id": "f80cd5e4-e9c5-4fe4-bdd4-5ac09e8ff2f2",
@@ -226,11 +229,72 @@
       "type": "n8n-nodes-base.set",
       "typeVersion": 3.5,
       "position": [
-        880,
-        656
+        1056,
+        608
       ],
       "id": "98b61bdb-de24-4fdb-a5be-b57883ade46f",
       "name": "Edit Fields"
+    },
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "academia-ai",
+        "responseMode": "responseNode",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2.1,
+      "position": [
+        -16,
+        160
+      ],
+      "id": "4838be9a-01ee-4f98-a59c-a2ab056f6230",
+      "name": "Webhook",
+      "webhookId": "f907a211-eb37-4c5a-bfd2-2a1b5a1585d0"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "179570b0-774f-40b1-82a3-566b2b1a0e85",
+              "name": "chatInput",
+              "value": "={{ $json.body.chatInput }}",
+              "type": "string"
+            },
+            {
+              "id": "799dfd33-b680-455d-9cee-1c5b88227c13",
+              "name": "sessionId",
+              "value": "academia-ai-web",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.5,
+      "position": [
+        208,
+        160
+      ],
+      "id": "aa88b211-bd3d-488c-ac78-2b4511a936da",
+      "name": "Edit Fields1"
+    },
+    {
+      "parameters": {
+        "respondWith": "json",
+        "responseBody": "={{ { \"resposta\": $json.output } }}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.5,
+      "position": [
+        864,
+        0
+      ],
+      "id": "fed4e795-cb19-4be7-9566-6b744c7fd92b",
+      "name": "Respond to Webhook"
     }
   ],
   "pinData": {},
@@ -270,7 +334,13 @@
     },
     "AI Agent": {
       "main": [
-        []
+        [
+          {
+            "node": "Respond to Webhook",
+            "type": "main",
+            "index": 0
+          }
+        ]
       ]
     },
     "If": {
@@ -356,9 +426,31 @@
           }
         ]
       ]
+    },
+    "Webhook": {
+      "main": [
+        [
+          {
+            "node": "Edit Fields1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Edit Fields1": {
+      "main": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
     }
   },
-  "active": false,
+  "active": true,
   "settings": {
     "executionOrder": "v1",
     "binaryMode": "separate",
@@ -366,7 +458,7 @@
     "timeSavedMode": "fixed",
     "callerPolicy": "workflowsFromSameOwner"
   },
-  "versionId": "ab79f899-0e48-4d79-8945-26c17c0e1027",
+  "versionId": "6b6aae38-1e75-469a-875e-85b92d48e0cd",
   "meta": {
     "templateCredsSetupCompleted": true,
     "instanceId": "6a6b1c291f820387169b5ef3c670c3931ecddb4cec52b88717a3a66464f43e81"
