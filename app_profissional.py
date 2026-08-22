@@ -575,6 +575,11 @@ HTML = r"""
 
       .user-bubble { max-width: 88%; }
     }
+    .powered {
+    color: #3b82f6;
+    font-weight: 600;
+    letter-spacing: 0.5px;
+}
   </style>
 </head>
 
@@ -682,6 +687,8 @@ HTML = r"""
 
         <div class="disclaimer">
           Academia AI pode cometer erros. Consulte um profissional quando necessário.
+<br>
+<span class="powered">Powered by Natanael</span>
         </div>
       </div>
     </div>
