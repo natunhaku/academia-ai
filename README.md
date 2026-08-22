@@ -162,7 +162,7 @@ Configure a variável de ambiente `N8N_WEBHOOK_URL` com o endereço do webhook d
 Exemplo:
 
 ```text
-N8N_WEBHOOK_URL=https://seu-endereco/webhook/academia-ai
+N8N_WEBHOOK_URL=https://seu-dominio-n8n.onrender.com/webhook/academia-ai
 ```
 
 ### Executar a aplicação
