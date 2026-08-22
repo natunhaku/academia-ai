@@ -70,6 +70,22 @@ O workflow do n8n contém a lógica utilizada pelo agente para receber as solici
 
 ---
 
+## Demonstração
+
+### Interface da aplicação
+
+A Academia AI possui uma interface web própria para interação com o agente.
+
+![Interface da Academia AI](screenshots/interface-academia-ai.png)
+
+### Agente em funcionamento
+
+Exemplo de interação com o agente através da aplicação publicada.
+
+![Academia AI em funcionamento](screenshots/academia-ai-funcionando.png)
+
+---
+
 ## Tecnologias utilizadas
 
 As principais tecnologias utilizadas no desenvolvimento foram:
