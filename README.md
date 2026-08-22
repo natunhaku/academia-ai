@@ -76,13 +76,13 @@ O workflow do n8n contém a lógica utilizada pelo agente para receber as solici
 
 A Academia AI possui uma interface web própria para interação com o agente.
 
-![Interface da Academia AI](screenshots/academia-ai-funcionando.png)
+![Interface da Academia AI](screenshots/interface-academia-ai.png)
 
 ### Agente em funcionamento
 
 Exemplo de interação com o agente através da aplicação publicada.
 
-![Academia AI em funcionamento](screenshots/interface-academia-ai.png)
+![Academia AI em funcionamento](screenshots/academia-ai-funcionando.png)
 
 ---
 
