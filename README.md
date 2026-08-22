@@ -1,89 +1,90 @@
-# Academia AI 🏋️🤖
+# Academia AI
 
-## Sobre o projeto
+Academia AI é uma aplicação web que utiliza inteligência artificial para auxiliar na criação e organização de treinos.
 
-O **Academia AI** é um agente inteligente criado para auxiliar usuários na criação de treinos e na consulta de informações presentes em documentos de treinamento.
+O projeto possui uma interface própria desenvolvida em Python com Flask, responsável pela interação com o usuário. As mensagens são encaminhadas para um workflow desenvolvido no n8n, onde são processadas pelo agente de inteligência artificial integrado ao Google Gemini.
 
-O agente utiliza Inteligência Artificial para conversar com o usuário em linguagem natural, entender seus objetivos e fornecer orientações relacionadas a exercícios físicos.
-
-Além disso, o usuário pode enviar documentos em **PDF** contendo informações sobre seus treinos. O Academia AI processa esses documentos e utiliza uma base vetorial para consultar as informações antes de responder perguntas específicas sobre o treino enviado.
-
-Este projeto foi desenvolvido como parte do **Challenge Agente de IA – Tech Builder ONE**, da Alura em parceria com a Oracle.
+O projeto foi desenvolvido como parte do Challenge Agente de IA do programa Tech Builder ONE, da Alura em parceria com a Oracle.
 
 ---
 
 ## Funcionalidades
 
-* Conversação em linguagem natural.
-* Criação de sugestões de treino.
-* Consulta de documentos enviados pelo usuário.
-* Upload de arquivos PDF.
-* Extração de texto dos documentos.
-* Geração de embeddings.
-* Busca semântica utilizando Vector Store.
-* Memória de conversa.
-* Respostas utilizando Google Gemini.
-* Orientações sobre execução de exercícios.
+A aplicação permite:
+
+- Conversar com o agente utilizando linguagem natural.
+- Solicitar sugestões de treinos.
+- Criar treinos para diferentes grupos musculares.
+- Solicitar treinos de acordo com objetivos específicos.
+- Receber informações sobre séries, repetições e intervalos.
+- Obter orientações sobre execução de exercícios.
+- Manter contexto durante a conversa.
+- Consultar informações armazenadas na base de conhecimento do agente.
 
 ---
 
 ## Arquitetura
-### Workflow no n8n
 
-A arquitetura do agente foi construída no n8n, integrando o Google Gemini, memória de conversa, embeddings e busca vetorial para consulta aos documentos enviados pelo usuário.
+O projeto é dividido em duas partes principais: a aplicação web e o agente de inteligência artificial.
 
-![Workflow do Academia AI no n8n](screenshots/workflow-n8n.png)
+A aplicação web recebe a mensagem enviada pelo usuário e realiza uma requisição para o webhook do n8n.
 
----
-O fluxo principal do projeto funciona da seguinte forma:
+O n8n é responsável pela orquestração do agente e pela comunicação com o modelo de linguagem.
+
+Fluxo simplificado:
 
 ```text
 Usuário
-   ↓
-Chat Trigger
-   ↓
-Verificação de arquivo
-   ↓
+   |
+   v
+Interface Web
+Flask / Python
+   |
+   v
+Webhook
+   |
+   v
+n8n
+   |
+   v
 AI Agent
-   ↓
-Google Gemini
-   ↓
-Memória da conversa
-   ↓
-Vector Store
-   ↓
-Resposta ao usuário
+   |
+   +---- Google Gemini
+   |
+   +---- Memória
+   |
+   +---- Base de conhecimento
+   |
+   v
+Resposta
+   |
+   v
+Interface Web
 ```
 
-Quando um documento é enviado:
+### Workflow no n8n
 
-```text
-PDF
- ↓
-Extração do texto
- ↓
-Preparação dos dados
- ↓
-Embeddings Gemini
- ↓
-Vector Store
- ↓
-Consulta pelo AI Agent
-```
+O workflow do n8n contém a lógica utilizada pelo agente para receber as solicitações, consultar as ferramentas disponíveis e gerar as respostas.
+
+![Workflow do Academia AI no n8n](screenshots/workflow-n8n.png)
 
 ---
 
 ## Tecnologias utilizadas
 
-* n8n
-* Google Gemini
-* Inteligência Artificial Generativa
-* Embeddings
-* Vector Store
-* RAG (Retrieval-Augmented Generation)
-* Git
-* GitHub
-* Visual Studio Code
+As principais tecnologias utilizadas no desenvolvimento foram:
+
+- Python
+- Flask
+- HTML
+- CSS
+- JavaScript
+- n8n
+- Google Gemini
+- Git
+- GitHub
+- Render
+- Visual Studio Code
 
 ---
 
@@ -91,63 +92,117 @@ Consulta pelo AI Agent
 
 ```text
 academia-ia/
-│
-├── docs/
-│
-├── n8n/
-│   └── academia-ai.json
-│
-├── screenshots/
-│
-├── .env.example
-├── .gitignore
-└── README.md
+|
+|-- docs/
+|
+|-- n8n/
+|   |-- academia-ai.json
+|
+|-- screenshots/
+|
+|-- app.py
+|-- requirements.txt
+|-- .env.example
+|-- .gitignore
+|-- README.md
 ```
+
+O arquivo `app.py` contém a aplicação Flask e a interface utilizada pelo usuário.
+
+O diretório `n8n` contém uma versão exportada do workflow utilizado pelo agente.
 
 ---
 
-## Como executar
+## Comunicação com o n8n
 
-### 1. Clone o repositório
+A aplicação utiliza uma variável de ambiente chamada:
+
+```text
+N8N_WEBHOOK_URL
+```
+
+Essa variável contém o endereço do webhook responsável pela comunicação entre a aplicação Flask e o workflow do n8n.
+
+As credenciais e endereços sensíveis não são armazenados diretamente no código-fonte.
+
+---
+
+## Executando o projeto localmente
+
+### Requisitos
+
+Antes de executar o projeto é necessário possuir:
+
+- Python instalado.
+- Uma instância do n8n configurada.
+- Credenciais válidas para os serviços utilizados pelo workflow.
+
+### Clonar o repositório
 
 ```bash
-git clone URL_DO_REPOSITORIO
+git clone https://github.com/natunhaku/academia-ai.git
 ```
 
-### 2. Abra o n8n
+Entre no diretório:
 
-Utilize uma instalação local ou uma instância do n8n.
+```bash
+cd academia-ai
+```
 
-### 3. Importe o workflow
+### Instalar as dependências
 
-No n8n:
+```bash
+pip install -r requirements.txt
+```
 
-1. Acesse a área de workflows.
-2. Escolha a opção de importar workflow.
-3. Selecione:
+### Configurar o webhook
+
+Configure a variável de ambiente `N8N_WEBHOOK_URL` com o endereço do webhook de produção do n8n.
+
+Exemplo:
 
 ```text
-n8n/academia-ai.json
+N8N_WEBHOOK_URL=https://seu-endereco/webhook/academia-ai
 ```
 
-### 4. Configure o Google Gemini
+### Executar a aplicação
 
-Crie sua própria credencial da API do Google Gemini dentro do n8n.
+```bash
+python app.py
+```
 
-As chaves de API não são armazenadas neste repositório.
-
-### 5. Execute o workflow
-
-Após configurar as credenciais, execute o workflow e utilize o chat do agente.
+Após iniciar o servidor, a aplicação poderá ser acessada pelo endereço local informado no terminal.
 
 ---
 
-## Exemplos de perguntas
+## Deploy
 
-O usuário pode perguntar:
+A aplicação foi publicada utilizando o Render.
+
+Versão pública:
+
+https://academia-ai-vusz.onrender.com
+
+A interface web se comunica com o serviço do n8n por meio do webhook configurado no ambiente de produção.
+
+Como a aplicação utiliza infraestrutura gratuita, o primeiro acesso após um período de inatividade pode apresentar um tempo maior de inicialização.
+
+---
+
+## Exemplos de uso
+
+Algumas solicitações que podem ser feitas ao agente:
 
 ```text
-Crie um treino de peito e bíceps para mim.
+Monte um treino de peito para hipertrofia.
+```
+
+```text
+Crie um treino de pernas focado em quadríceps.
+```
+
+```text
+Monte um treino para fazer em casa.
 ```
 
 ```text
@@ -155,27 +210,27 @@ Como executar corretamente o supino com halteres?
 ```
 
 ```text
-Quantas séries de agachamento existem no meu treino?
+Quero ganhar massa muscular. Como posso organizar meu treino?
 ```
 
-```text
-Quais exercícios para costas aparecem no documento que enviei?
-```
-
-Quando uma pergunta estiver relacionada ao documento enviado, o agente consulta a base vetorial antes de produzir a resposta.
+O agente interpreta a solicitação e retorna uma resposta com informações relacionadas ao treino solicitado.
 
 ---
 
 ## Segurança
 
-As credenciais utilizadas para acessar serviços externos não são armazenadas diretamente no código do projeto.
+Credenciais e chaves de API não são incluídas diretamente no repositório.
 
-Cada usuário que importar o workflow deverá configurar suas próprias credenciais no n8n.
+As informações sensíveis utilizadas pelo projeto são configuradas por meio de variáveis de ambiente ou pelo sistema de credenciais do n8n.
+
+O arquivo `.env` não deve ser enviado para o repositório.
 
 ---
 
 ## Autor
 
-**Natanael Barbosa de Sousa**
+Natanael Barbosa de Sousa
 
-Projeto desenvolvido para o Challenge Agente de IA do programa **Tech Builder ONE – Alura + Oracle**.
+Projeto desenvolvido para o Challenge Agente de IA do programa Tech Builder ONE - Alura + Oracle.
+
+Powered by Natanael
